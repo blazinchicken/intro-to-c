@@ -5,31 +5,30 @@
 int count;
 int difficulty;
 int questions;
-int count2;
 int score;
 
 int count = 0;
-int count2 = 1;
 
-srand(time(NULL));
+typedef enum OperationType {
 
-int main(int argc, char *argv[])
-    {
-        get_data();
-        if (count2 <= count){
-            generate_question(difficulty, count);
-        }
-    }
+    ADD,
+    SUB,
+    MUL,
+    DIV,
+};
 
-int get_data()
+/* srand(time(NULL));*/
+
+void get_data()
     {
         printf("How many questions for this test(1-20)? ");
         scanf("%d", &count);
         printf("\n");
         printf("Select Difficulty (1-4): ");
         scanf("%d", &difficulty);
-        return difficulty, count ;
     }
+
+
 
 int generate_question(int difficulty, int count)
     {
@@ -38,7 +37,7 @@ int generate_question(int difficulty, int count)
         int value1;
         int value2;
         int operation;
-        char opstring[] = "void";
+        char opstring;
         
 
         if(difficulty == 1){
@@ -55,30 +54,29 @@ int generate_question(int difficulty, int count)
             bound2 = 100;
         }
 
-        operation = rand() % 4;
+        operation = (rand() % 4) + 1;
 
         if(operation == 1){
-            char opstring[] = "+";
+            opstring = '+';
+            /* this declares a new variable */
         } else if(operation == 2){
-            char opstring[] = "-";
+             opstring = '-';
         } else if(operation == 3){
-            char opstring[] = "*";
+             opstring = '*';
         } else if(operation == 4){
-            char opstring[] = "/";
+             opstring = '/';
         }
 
         value1 = rand() % bound2;
         value2 = rand() % bound2;
 
         
-        printf("Question %d:", count2);
-        printf("%d ",value1);
-        printf("%s ", opstring);
-        printf("%d ",value2);
-
-        count2++;
+        printf("Question %d: %d %c %d", count2, value1, opstring, value2);
         
-        return operation, count2;
+
+        
+        
+        return operation;
     }
 
 int answer_question(int count, int operation)
@@ -89,5 +87,17 @@ int answer_question(int count, int operation)
 int print_response()
     {
 
+    }
+
+int main(int argc, char *argv[])
+    {
+        int i;
+        get_data();
+        
+        for (i = 0; i < count; i++){
+            generate_question(difficulty, count);
+        }
+
+        return 0;
     }
 
