@@ -1,0 +1,15 @@
+int count;
+int difficulty;
+int questions;
+int operation;
+
+count = 0
+
+int main(){   
+        get_data();
+    }
+
+int get_data()
+    {
+        printf("How many questions for this test(1-20)?");
+    }
