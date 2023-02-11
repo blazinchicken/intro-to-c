@@ -3,10 +3,16 @@
 #include <time.h>
 
 int count;
+int count2;
 int difficulty;
 int questions;
 int score;
+int answer;
+int value1;
+int value2;
+int operation;
 
+int count2 = 1;
 int count = 0;
 
 typedef enum OperationType {
@@ -14,7 +20,7 @@ typedef enum OperationType {
     ADD,
     SUB,
     MUL,
-    DIV,
+    DIV
 };
 
 /* srand(time(NULL));*/
@@ -32,25 +38,17 @@ void get_data()
 
 int generate_question(int difficulty, int count)
     {
-        int bound1;
         int bound2;
-        int value1;
-        int value2;
-        int operation;
         char opstring;
         
 
         if(difficulty == 1){
-            bound1 = 1;
             bound2 = 10;
         } else if(difficulty == 2) {
-            bound1 = 1;
             bound2 = 50;
         } else if(difficulty == 3) {
-            bound1 = 1;
             bound2 = 100;
         } else if(difficulty == 4) {
-            bound1 = -100;
             bound2 = 100;
         }
 
@@ -72,15 +70,25 @@ int generate_question(int difficulty, int count)
 
         
         printf("Question %d: %d %c %d", count2, value1, opstring, value2);
-        
+        scanf("%d", &answer);
+        printf("\n");
 
         
         
         return operation;
     }
 
-int answer_question(int count, int operation)
+int answer_question(int count, int operation, int value1, int value2,int answer)
     {
+        int true_answer;
+        if (operation == 1) {
+            true_answer = value1 + value2;
+
+        } else if (operation == 2){
+            true_answer = value1 - value2;
+        } else if (operation == 3){
+            true_answer = value1 * value2;
+        }
 
     }
 
@@ -96,6 +104,8 @@ int main(int argc, char *argv[])
         
         for (i = 0; i < count; i++){
             generate_question(difficulty, count);
+            count2++;
+            answer_question(count, operation, value1, value2, answer);
         }
 
         return 0;
