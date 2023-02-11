@@ -17,8 +17,6 @@ int correct = 0;
 int count2 = 1;
 int count = 0;
 
-/* srand(time(NULL));*/
-
 void get_data()
     {
         printf("How many questions for this test(1-20)? ");
@@ -130,10 +128,11 @@ void print_response(int correct, int true_answer)
 
     }
 
-int main(int argc, char *argv[])
+int main(void)
     {
         int i;
         get_data();
+        srand((unsigned) time(NULL));
         
         for (i = 0; i < count; i++){
             generate_question(difficulty, count);
