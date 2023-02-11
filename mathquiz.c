@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+#include <time.h>   
 
 int count;
 int count2;
@@ -16,6 +16,7 @@ int correct = 0;
 
 int count2 = 1;
 int count = 0;
+time_t t;
 
 void get_data()
     {
@@ -132,7 +133,7 @@ int main(void)
     {
         int i;
         get_data();
-        srand((unsigned) time(NULL));
+        srand((unsigned) time(&t));
         
         for (i = 0; i < count; i++){
             generate_question(difficulty, count);
