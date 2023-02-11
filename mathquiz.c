@@ -11,17 +11,11 @@ int answer;
 int value1;
 int value2;
 int operation;
+int true_answer;
+int correct = 0;
 
 int count2 = 1;
 int count = 0;
-
-typedef enum OperationType {
-
-    ADD,
-    SUB,
-    MUL,
-    DIV
-};
 
 /* srand(time(NULL));*/
 
@@ -68,8 +62,16 @@ int generate_question(int difficulty, int count)
         value1 = rand() % bound2;
         value2 = rand() % bound2;
 
+        if(operation == 4 && value2 == 0){
+            value2 = rand() % bound2;
+        }
+
+        if(operation == 4 && value1 == 0){
+            value1 = rand() % bound2;
+        }
+
         
-        printf("Question %d: %d %c %d", count2, value1, opstring, value2);
+        printf("Question %d: %d %c %d = ", count2, value1, opstring, value2);
         scanf("%d", &answer);
         printf("\n");
 
@@ -80,20 +82,51 @@ int generate_question(int difficulty, int count)
 
 int answer_question(int count, int operation, int value1, int value2,int answer)
     {
-        int true_answer;
+        
         if (operation == 1) {
             true_answer = value1 + value2;
-
         } else if (operation == 2){
             true_answer = value1 - value2;
         } else if (operation == 3){
             true_answer = value1 * value2;
+        } else if (operation == 4){
+            true_answer = value1 / value2;
         }
 
+        if (true_answer == answer){
+            correct = 1;
+            score++;
+        } else {
+            correct = 0;
+        }
+        return correct;
+        return true_answer;
     }
 
-int print_response()
+void print_response(int correct, int true_answer)
     {
+        int rand_response;
+
+        if (correct == 1){
+            rand_response = rand() % 3;
+            if(rand_response == 0) {
+                printf("Good Job!\n");
+            } else if(rand_response == 1) {
+                printf("Nice Work!\n");
+            } else if(rand_response == 2) {
+                printf("Awesome!\n");
+            }
+        } else if (correct == 0) {
+            rand_response = rand() % 3;
+            if(rand_response == 0) {
+                printf("Nice Try!\n");
+            } else if(rand_response == 1) {
+                printf("Sorry!\n");
+            } else if(rand_response == 2) {
+                printf("Maybe Next Time!\n");
+            }
+            printf("The correct answer was %d\n",true_answer);
+        }
 
     }
 
@@ -106,7 +139,9 @@ int main(int argc, char *argv[])
             generate_question(difficulty, count);
             count2++;
             answer_question(count, operation, value1, value2, answer);
+            print_response(correct, true_answer);
         }
+        printf("Score %d/%d", score, count);
 
         return 0;
     }
