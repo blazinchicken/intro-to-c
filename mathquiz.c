@@ -133,7 +133,7 @@ int main(void)
     {
         int i;
         get_data();
-        srand((unsigned) time(&t));
+        srand((int) time(0));
         
         for (i = 0; i < count; i++){
             generate_question(difficulty, count);
