@@ -1,70 +1,67 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
-#define MAX_NUM_WORDS 1000
-#define MAX_WORD_LENGTH 50
+#define WORD_COUNT 100
 
-void Word_List(char words)
-  {
-int j = 0;
-int numWords = 0;
-char c;
-char word[MAX_WORD_LENGTH];
-while((c = fgetc(stdin)) != EOF){
-  if(c == '\n')
-  {
-    word[j] = '\0';
-    strcpy(words[numWords],word);
-    numWords++;
-    j = 0 ;
-  }
-  else {
-    word[j] = c;
-    j++;
-  }
-}
-word[j] = '\0';
-strcpy(words[numWords], word);
-numWords++;
+int len = 0;
+int half = 0;
+char buf[50];
+int i = 1;
+int k = 0;
+int j;
+int l;
+char **crossword;
+char **key;
 
-}
-
-int main(void) {
-	char buf[50];
-	int len;
-	int i = 1;
-	int half;
+void setup() {
 
 	fgets(buf, sizeof(buf), stdin);
-
 	len = strlen(buf);
-	half = (len - 1) / 2;
-	
-	char crossword[half][len];
-  char words[MAX_NUM_WORDS][MAX_WORD_LENGTH];
+	half = (len - 2) / 2;
+	crossword = malloc(half * sizeof(char*));
+	for(j = 0; j <= half; j++) {
+		crossword[j] = malloc((len+1) * sizeof(char));
+	}
 	strcat(crossword[0], buf);
 
-	while(fgets(buf, sizeof(buf), stdin) != NULL && i < half) {
-		/*printf("%s", buf); */
+	key = malloc(WORD_COUNT * sizeof(char*));
+	for(l = 0; l < WORD_COUNT; l++) {
+		key[l] = malloc((len+1) * sizeof(char));
+	}
+}
+
+int main() {
+	setup();
+
+	while(fgets(buf, sizeof(buf), stdin) != NULL && i < half) {/* && i < half) {*/
+		/*
+		if(i == half) {
+			strcat(key[0], buf);
+			k++;
+			memset(&buf, 0, sizeof(buf));
+			break;
+		}
+		*/
+		
 		strcat(crossword[i], buf);
+		printf("%s", crossword[i]);
 		i++;
 		memset(&buf, 0, sizeof(buf));
 
 	}
-	printf("%s", crossword);
-  Word_List(words);
-}
-/*
-int get_charlist()
-{
-int j = 0
-char * lines = strtok(buf,"\n");
-char * letter = strtok(lines," ");
-while (letter!=NULL){
-  j=j+1;
-  letter = strtok(NULL," ");
-}
+
+	while(fgets(buf, sizeof(buf), stdin) != NULL && k < WORD_COUNT) {
+		strcat(key[k], buf);
+		printf("%s", key[k]);
+		k++;
+		memset(&buf, 0, sizeof(buf));
+	}	
+	
+	/*
+	printf("%s", crossword[14]);
+	printf("%s", key[0]);
+	*/
+
 
 }
-*/
-
