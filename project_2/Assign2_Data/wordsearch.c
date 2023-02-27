@@ -4,37 +4,65 @@
 
 #define WORD_COUNT 100
 
-int len = 0;
-int half = 0;
-char buf[50];
+int length = 0;
+int gridsize = 0;
+int column = 0;
+char buf[110];
 int i = 1;
 int k = 0;
 int j;
 int l;
-char **crossword;
-char **key;
+char crossword[50][50];
 
 void setup() {
+ int row;
+ int lineChar;
+
+  for(i = 0; i < 50; i++)
+  {
+    for(j = 0; j < 50; j++)
+    {
+      crossword[i][j] = " ";
+    }
+  }
 
 	fgets(buf, sizeof(buf), stdin);
-	len = strlen(buf);
-	half = (len - 2) / 2;
-	crossword = malloc(half * sizeof(char*));
-	for(j = 0; j <= half; j++) {
-		crossword[j] = malloc((len+1) * sizeof(char));
-	}
-	strcat(crossword[0], buf);
-
-	key = malloc(WORD_COUNT * sizeof(char*));
-	for(l = 0; l < WORD_COUNT; l++) {
-		key[l] = malloc((len+1) * sizeof(char));
-	}
+	length = strlen(buf);
+	gridsize = (length) / 2;
+	
+  for(row = 0; row < gridsize; row++)
+  {
+    column = 0;
+    for(lineChar = 0; lineChar < length; lineChar++)
+    {
+      if ((lineChar % 2) == 0)
+      {
+        crossword[row][column] = buf[lineChar];
+        column++;
+      }
+    }
+    if(row != (gridsize - 1))
+    {
+      fgets(buf, sizeof(buf), stdin);
+    }
+  }
+  for(row = 0; row < gridsize; row++){
+    printf("%s", crossword[row]); 
+  }
 }
+	
+	
+
+
+	
+
+
 
 int main() {
 	setup();
+  return 0;
 
-	while(fgets(buf, sizeof(buf), stdin) != NULL && i < half) {/* && i < half) {*/
+	/*while(fgets(buf, sizeof(buf), stdin) != NULL && i < half) {/* && i < half) {*/
 		/*
 		if(i == half) {
 			strcat(key[0], buf);
@@ -42,7 +70,7 @@ int main() {
 			memset(&buf, 0, sizeof(buf));
 			break;
 		}
-		*/
+		
 		
 		strcat(crossword[i], buf);
 		printf("%s", crossword[i]);
@@ -52,10 +80,7 @@ int main() {
 	}
 
 	while(fgets(buf, sizeof(buf), stdin) != NULL && k < WORD_COUNT) {
-		strcat(key[k], buf);
-		printf("%s", key[k]);
-		k++;
-		memset(&buf, 0, sizeof(buf));
+		
 	}	
 	
 	/*
