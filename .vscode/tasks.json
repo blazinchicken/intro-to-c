@@ -8,6 +8,9 @@
                 "-fdiagnostics-color=always",
                 "-g",
                 "${file}",
+                "-Wall",
+                "-ansi",
+                "-pedantic",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],
