@@ -62,6 +62,7 @@ void search(char *word){
 
 
 void setup() {
+ char space = ' ';
  int lineChar;
 
   for(i = 0; i < 50; i++)
@@ -86,6 +87,8 @@ void setup() {
       {
         crossword[row][column] = buf[lineChar];
         column++;
+      } else {
+        crossword[row][column] = space;
       }
     }
     if(row != (gridsize - 1))
@@ -108,8 +111,12 @@ int main() {
 		
 	}
 	for(row = 0; row < gridsize; row++){
-		printf("%.50s\n", crossSolution[row]); 
+		for(column=0; column < gridsize; column++){
+			printf("%c ", crossSolution[row][column]);
+		}
+		printf("\n"); 
 	}	
+	
 	/*putc*/
   return 0;
 
