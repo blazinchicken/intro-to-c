@@ -5,12 +5,12 @@
 #define MEMORY_SIZE 100
 
 typedef struct {
-    int acc; // Accumulator register
-    int ic; // Instruction counter
-    char ir[5]; // Instruction register (4 digits + null terminator)
-    int opcode; // Current instruction's opcode
-    int operand; // Current instruction's operand
-    int memory[MEMORY_SIZE]; // VM's memory
+    int acc; /* Accumulator register*/
+    int ic; /*Instruction counter*/ 
+    char ir[5]; /*Instruction register (4 digits + null terminator)*/ 
+    int opcode; /*Current instruction's opcode*/ 
+    int operand; /*Current instruction's operand*/ 
+    int memory[MEMORY_SIZE]; /*VM's memory*/ 
 } VM;
 
 void initialize(VM *vm) {
@@ -39,60 +39,63 @@ void decode(VM *vm) {
 }
 
 void execute(VM *vm) {
+    int i;
     switch (vm->opcode) {
-        case 10: // READ
+        case 10: /*READ*/ 
             printf("Enter a value: ");
             scanf("%d", &vm->memory[vm->operand]);
             break;
-        case 11: // WRIT
+        case 11: /*WRIT*/ 
             printf("%d\n", vm->memory[vm->operand]);
             break;
-        case 12: // PRNT
+        case 12: /*PRNT*/ 
             while (vm->memory[vm->operand] != 0) {
                 printf("%c", vm->memory[vm->operand]);
                 vm->operand++;
             }
             printf("\n");
             break;
-        case 20: // LOAD
+        case 20: /*LOAD*/ 
             vm->acc = vm->memory[vm->operand];
             break;
-        case 21: // STOR
+        case 21: /*STOR*/ 
             sprintf(vm->ir, "%04d", vm->acc);
             memcpy(&vm->memory[vm->operand], vm->ir, 4);
             break;
-        case 30: // ADD
+        case 30: /*ADD*/ 
             vm->acc += vm->memory[vm->operand];
             break;
-        case 31: // SUB
+        case 31: /*SUB*/ 
             vm->acc -= vm->memory[vm->operand];
             break;
-        case 32: // DIV
+        case 32: /*DIV*/ 
             vm->acc /= vm->memory[vm->operand];
             break;
-        case 33: // MULT
+        case 33: /*MULT*/ 
             vm->acc *= vm->memory[vm->operand];
             break;
-        case 34: // MOD
+        case 34: /*MOD*/ 
             vm->acc %= vm->memory[vm->operand];
             break;
-        case 40: // BRAN
+        case 40: /*BRAN*/ 
             vm->ic = vm->operand;
             break;
-        case 41: // BRNG
+        case 41: /*BRNG*/ 
             if (vm->acc < 0) {
                 vm->ic = vm->operand;
             }
             break;
-        case 42: // BRZR
+        case 42: /*BRZR*/ 
             if (vm->acc == 0) {
                 vm->ic = vm->operand;
             }
             break;
-        case 99: // HALT
+        case 99: /*HALT*/ 
             printf("Memory state:\n");
             printf("Addr   Value\n");
             printf("------------\n");
-            for (int i = 0; i < MEMORY_SIZE; i++) {
+            for (i = 0; i < MEMORY_SIZE; i++) {
 
             };
+    }
+}
