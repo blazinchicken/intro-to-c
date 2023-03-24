@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 /*Steps to Success
     1. Create Processor
@@ -32,9 +33,9 @@
 int acc;
 int ic;
 char ir[5];
-int opcode;
-int operand;
-int memory[MEM_MAX];
+int32_t opcode;
+int32_t operand;
+int memory[MEM_MAX] = {0};
 char input[13];
 char reg[2];
 char operString[5];
@@ -47,6 +48,16 @@ char operData[5];
     vm->operand = 0;
     memset(vm->memory, 0, MEM_MAX);
 }*/
+void printWord(int32_t word){
+    int16_t firstHalf;
+    int16_t secondHalf;
+
+    firstHalf = (word >> 16) & 0xFFFF;
+    secondHalf = word & 0xFFFF;
+
+    printf("%02d%02d",firstHalf,secondHalf);
+    
+}
 
 
 void convert(char *operString){
@@ -87,8 +98,7 @@ void convert(char *operString){
 
 void compile(char *input){
    /* setStruct();*/
-   
-    int i;
+    int16_t addr;
    /* for(i=0;i<2;i++){
         reg[i] = input[i];
         printf("%c",reg[i]);
@@ -105,14 +115,19 @@ void compile(char *input){
     strcpy(operString, strtok(NULL, " "));
     /*printf("%s\n",operString);*/ 
     strcpy(operData, strtok(NULL, " "));
-    operand = atoi(operData);
+    operand = (int32_t)atoi(operData);
+    addr = (int32_t)atoi(reg);
     convert(operString);
     if(opcode == 22){
-        printf("%04d\n",operand);
+        memcpy(&memory[addr],&operand,4); /* buggg - split into 2 - 2bytes*/
 
     } else {
-         printf("%d%02d\n", opcode,operand);
+        /*printf("%d%02d\n", opcode,operand);*/
+        int32_t thingToMemCpy = (opcode << 16) | operand;
+        memcpy(&memory[addr], &thingToMemCpy, 4);
+        
     }
+    
    
 }
 
@@ -121,9 +136,17 @@ void execute(){
 
 }
 int main(void) {
+    int i;
     while(fgets(input, 13, stdin)) {
 		/* printf("%s\n", input); */
         compile(input);
+    }
+    for(i=0;i<100;i++){
+        printWord(memory[i]);
+        printf(" ");
+        if (((i % 10) == 0 ) && (i != 0)) {
+            printf("\n");
+        }
     }
     return 0;
 }
