@@ -31,8 +31,8 @@
 } VM;
 */
 int acc;
-int ic;
-char ir[5];
+int ic = 0;
+int ir;
 int32_t opcode;
 int32_t operand;
 int memory[MEM_MAX] = {0};
@@ -99,6 +99,9 @@ void convert(char *operString){
 void compile(char *input){
    /* setStruct();*/
     int16_t addr;
+    char operandOne[3];
+    char operandTwo[3]; 
+    int32_t thingToMemCpy;
    /* for(i=0;i<2;i++){
         reg[i] = input[i];
         printf("%c",reg[i]);
@@ -115,15 +118,22 @@ void compile(char *input){
     strcpy(operString, strtok(NULL, " "));
     /*printf("%s\n",operString);*/ 
     strcpy(operData, strtok(NULL, " "));
-    operand = (int32_t)atoi(operData);
+    
     addr = (int32_t)atoi(reg);
     convert(operString);
     if(opcode == 22){
-        memcpy(&memory[addr],&operand,4); /* buggg - split into 2 - 2bytes*/
+        memcpy(operandOne, operData,2);
+        operandOne[2] = '\0';
+        memcpy(operandTwo, &operData[2],2);
+        operandTwo[2] = '\0';
+        
+        thingToMemCpy = (((int32_t)atoi(operandOne)) << 16) | ((int32_t)atoi(operandTwo));
+        memcpy(&memory[addr], &thingToMemCpy, 4);
 
     } else {
         /*printf("%d%02d\n", opcode,operand);*/
-        int32_t thingToMemCpy = (opcode << 16) | operand;
+        operand = (int32_t)atoi(operData);
+        thingToMemCpy = (opcode << 16) | operand;
         memcpy(&memory[addr], &thingToMemCpy, 4);
         
     }
@@ -133,7 +143,66 @@ void compile(char *input){
 
 
 void execute(){
+    int k = 1;
+    int i; 
 
+    while(k == 1){
+        ir = memory[ic];
+        opcode = (ir >> 16) & 0xFFFF;
+        operand = ir & 0xFFFF; 
+        switch (opcode){
+            case 10: /*READ*/
+                break;
+            case 11: /*WRIT*/
+                printWord(memory[operand]);
+                break;
+            case 12: /*PRNT*/
+            /*BUGGGG SPLITTTTTTTTTTTTTTTTTTTTTTT*/
+                for(i=operand; memory[i] == '\0'; i++){ 
+                    printf("%c",memory[i]);
+                }             
+                break;
+            case 20: /*LOAD*/
+                acc = memory[operand];
+                break;
+            case 21: /*STOR*/
+                memory[operand] = acc;
+                break;
+            case 30: /*ADD*/
+                acc = acc + memory[operand];
+                break;
+            case 31: /*SUB*/
+                acc = acc - memory[operand];
+                break;
+            case 32: /*DIV*/
+                acc = acc / memory[operand];
+                break;
+            case 33: /*MULT*/
+                acc = acc * memory[operand];
+                break;
+            case 34: /*MOD*/
+                acc = acc % memory[operand];
+                break;
+            case 40: /*BRAN*/
+                ic = operand;
+                break;
+            case 41: /*BRNG*/
+                if(acc < 0){
+                    ic = operand;
+                } 
+                break;      
+            case 42: /*BRZR*/
+                if(acc == 0){
+                    ic = operand;
+                }
+                break;
+            case 99: /*HALT*/
+                goto endOfForever;
+                break;
+            default:
+        }
+    }
+    endOfForever:
 }
 int main(void) {
     int i;
@@ -141,13 +210,16 @@ int main(void) {
 		/* printf("%s\n", input); */
         compile(input);
     }
+    /* stdin = fopen("/dev/tty", "r"); */
     for(i=0;i<100;i++){
-        printWord(memory[i]);
-        printf(" ");
         if (((i % 10) == 0 ) && (i != 0)) {
             printf("\n");
         }
+        printWord(memory[i]);
+        printf(" ");
+        
     }
+    execute();
     return 0;
 }
 
