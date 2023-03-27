@@ -40,6 +40,7 @@ char input[13];
 char reg[2];
 char operString[5];
 char operData[5];
+int isHalt = 0;
 /*void setStruct(VM *vm){
     vm->acc = 0;
     vm->ic = 0;
@@ -90,9 +91,11 @@ void convert(char *operString){
     }else if(strcmp(operString,"BRZR") == 0){
         opcode = 42;
     }else if(strcmp(operString,"HALT") == 0){
+        isHalt = 1;
         opcode = 99;
     } else {
-        printf("Unrecognized command word, they are case sensitive\n");
+        printf("Unknown Command - Unrecognized command word, they are case sensitive\n");
+        exit(1);
     }
 }
 
@@ -102,6 +105,7 @@ void compile(char *input){
     char operandOne[3];
     char operandTwo[3]; 
     int32_t thingToMemCpy;
+    int i;
    /* for(i=0;i<2;i++){
         reg[i] = input[i];
         printf("%c",reg[i]);
@@ -115,12 +119,33 @@ void compile(char *input){
         printf("%c",operData[i-7]);
     }*/
     strcpy(reg, strtok(input, " "));
+    if(strlen(reg) != 2){
+        printf("Undefined Use - Command is not in the Proper Format");
+        exit(2);
+    }                   
     strcpy(operString, strtok(NULL, " "));
+    if(strlen(operString) != 5){
+        printf("Undefined Use - Command is not in the Proper Format");
+        exit(2);
+    }
     /*printf("%s\n",operString);*/ 
     strcpy(operData, strtok(NULL, " "));
+    if(strlen(operData) != 5){
+        printf("Undefined Use - Command is not in the Proper Format");
+        exit(2);
+    }
     
     addr = (int32_t)atoi(reg);
     convert(operString);
+    if(isHalt == 0){
+        printf("No HALT - No Halt Command is Ever Given");
+        exit(3);
+    }
+    if(operData <= 10000){
+        printf("Word Overflow - Attempts to Place a Word in Memory that is Larger than 4 digits");
+        exit(1);
+    }
+
     if(opcode == 22){
         memcpy(operandOne, operData,2);
         operandOne[2] = '\0';
@@ -152,36 +177,46 @@ void execute(){
         operand = ir & 0xFFFF; 
         switch (opcode){
             case 10: /*READ*/
+                ic++;
                 break;
             case 11: /*WRIT*/
                 printWord(memory[operand]);
+                ic++;
                 break;
             case 12: /*PRNT*/
             /*BUGGGG SPLITTTTTTTTTTTTTTTTTTTTTTT*/
                 for(i=operand; memory[i] == '\0'; i++){ 
                     printf("%c",memory[i]);
-                }             
+                } 
+                ic++;            
                 break;
             case 20: /*LOAD*/
                 acc = memory[operand];
+                ic++;
                 break;
             case 21: /*STOR*/
                 memory[operand] = acc;
+                ic++;
                 break;
             case 30: /*ADD*/
                 acc = acc + memory[operand];
+                ic++;
                 break;
             case 31: /*SUB*/
                 acc = acc - memory[operand];
+                ic++;
                 break;
             case 32: /*DIV*/
                 acc = acc / memory[operand];
+                ic++;
                 break;
             case 33: /*MULT*/
                 acc = acc * memory[operand];
+                ic++;
                 break;
             case 34: /*MOD*/
                 acc = acc % memory[operand];
+                ic++;
                 break;
             case 40: /*BRAN*/
                 ic = operand;
@@ -189,36 +224,114 @@ void execute(){
             case 41: /*BRNG*/
                 if(acc < 0){
                     ic = operand;
-                } 
+                } else {
+                    ic++;
+                }
                 break;      
             case 42: /*BRZR*/
                 if(acc == 0){
                     ic = operand;
+                } else {
+                    ic++;
                 }
                 break;
             case 99: /*HALT*/
+                printAll();
                 goto endOfForever;
+                ic++;
                 break;
             default:
+            printf("Unknown command - Unrecognized command code");
+            exit(1);
+
         }
-    }
+    }       
     endOfForever:
+    return;
+}
+
+void printAll(){
+    int i;
+
+    printf("\n");
+    printf("REGISTERS: \n");
+    printf("Accumulator:            %+05d\n", acc);
+    printf("Instruction Counter:    %+02d\n", ic);
+    printf("Instruction Register:   %02d\n", ir);
+    printf("OperationCode:          %02d\n", opcode);
+    printf("Operand:                %02d\n", operand);
+    printf("\n");
+    printf("MEMORY:\n");
+    printf("      0      1      2      3      4      5      6      7      8      9\n");
+    printf("0   ");
+        for(i=0;i<10;i++){
+            printf("+");
+            printWord(memory[i]);
+            printf("  ");
+        }
+    printf("\n10  ");
+        for(i=10;i<20;i++){
+            printf("+");
+            printWord(memory[i]);
+            printf("  ");
+        }
+    printf("\n20  ");
+        for(i=20;i<30;i++){
+            printf("+");
+            printWord(memory[i]);
+            printf("  ");
+        }
+    printf("\n30  ");
+        for(i=30;i<40;i++){
+            printf("+");
+            printWord(memory[i]);
+            printf("  ");
+        }
+    printf("\n40  ");
+        for(i=40;i<50;i++){
+            printf("+");
+            printWord(memory[i]);
+            printf("  ");
+        }
+    printf("\n50  ");
+        for(i=50;i<60;i++){
+            printf("+");
+            printWord(memory[i]);
+            printf("  ");
+        }
+    printf("\n60  ");
+        for(i=60;i<70;i++){
+            printf("+");
+            printWord(memory[i]);
+            printf("  ");
+        }
+    printf("\n70  ");
+        for(i=70;i<80;i++){
+            printf("+");
+            printWord(memory[i]);
+            printf("  ");
+        }
+    printf("\n80  ");
+        for(i=80;i<90;i++){
+            printf("+");
+            printWord(memory[i]);
+            printf("  ");
+        }
+    printf("\n90  ");
+        for(i=90;i<100;i++){
+            printf("+");
+            printWord(memory[i]);
+            printf("  ");
+        }
+
 }
 int main(void) {
-    int i;
     while(fgets(input, 13, stdin)) {
 		/* printf("%s\n", input); */
         compile(input);
     }
     /* stdin = fopen("/dev/tty", "r"); */
-    for(i=0;i<100;i++){
-        if (((i % 10) == 0 ) && (i != 0)) {
-            printf("\n");
-        }
-        printWord(memory[i]);
-        printf(" ");
-        
-    }
+   printAll();
     execute();
     return 0;
 }
