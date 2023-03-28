@@ -249,15 +249,27 @@ void execute(){
     int i;
     int32_t op1;
     int32_t op2;
+    int scanBuff;
 
     while(k == 1){
         ir = memory[ic];
         opcode = (ir >> 16) & 0xFFFF;
         operand = ir & 0xFFFF; 
+        if(operand >= 100){
+            printf("Segmentation Fault - Tries to Access Unknown Address");
+            exit(1);
+        }
         switch (opcode){
             case 10: /*READ*/
+                /*scanf("%d", &scanBuff);
+                if(scanBuff >= 10000){
+                    printf("Word Overflow - Attempts to place a Word in Memory larger than 4 digits");
+                    break;
+                } else {
+                    memory[operand] = scanBuff;
+                }
                 ic++;
-                break;
+                break;*/
             case 11: /*WRIT*/
                 printWord(memory[operand]);
                 ic++;
@@ -298,6 +310,7 @@ void execute(){
             case 32: /*DIV*/
                 if(memory[operand] == 0){
                     printf("Divide 0 - Division by 0 was attempted");
+                    exit(1);
                     break;
                 }
                 acc = acc / memory[operand];
@@ -310,6 +323,7 @@ void execute(){
             case 34: /*MOD*/
                 if(memory[operand] == 0){
                     printf("Divide 0 - Division by 0 was attempted");
+                    exit(1);
                     break;
                 }
                 acc = acc % memory[operand];
@@ -342,6 +356,10 @@ void execute(){
             exit(1);
 
         }
+        if(acc >= 10000){
+            printf("Word Overflow - Attempts to Place a Word in Accumulator so that it is Larger than 4 digits");
+            exit(1);
+        }
     }       
     endOfForever:
     return;
@@ -368,6 +386,6 @@ int main(void) {
 /* TODO
 
 1. Make Read Work
-2.RT Error: WORD OVERFLOW
-            Segmentation Fault
-            UnknownCharacter */
+2.RT Error: WORD OVERFLOW - mostly done
+            Segmentation Fault - should be done
+            UnknownCharacter - if statement? - lots of ||*/
