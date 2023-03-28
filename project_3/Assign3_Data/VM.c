@@ -119,29 +119,23 @@ void compile(char *input){
         printf("%c",operData[i-7]);
     }*/
     strcpy(reg, strtok(input, " "));
-    if(strlen(reg) != 2){
+    if((int)(strlen(reg)) != 2){
         printf("Undefined Use - Command is not in the Proper Format");
         exit(2);
     }                   
     strcpy(operString, strtok(NULL, " "));
-    if(strlen(operString) != 5){
+    if(!(((int)strlen(operString) == 4 )||((int)strlen(operString) == 3 ))){
         printf("Undefined Use - Command is not in the Proper Format");
         exit(2);
     }
     /*printf("%s\n",operString);*/ 
-    strcpy(operData, strtok(NULL, " "));
-    if(strlen(operData) != 5){
-        printf("Undefined Use - Command is not in the Proper Format");
-        exit(2);
-    }
+    strcpy(operData, strtok(NULL, " \n"));
+    
     
     addr = (int32_t)atoi(reg);
     convert(operString);
-    if(isHalt == 0){
-        printf("No HALT - No Halt Command is Ever Given");
-        exit(3);
-    }
-    if(operData <= 10000){
+    
+    if(atoi(operData) >= 10000){
         printf("Word Overflow - Attempts to Place a Word in Memory that is Larger than 4 digits");
         exit(1);
     }
@@ -151,12 +145,19 @@ void compile(char *input){
         operandOne[2] = '\0';
         memcpy(operandTwo, &operData[2],2);
         operandTwo[2] = '\0';
-        
+        if((int)strlen(operData) > 4){
+            printf("Undefined Use - Command is not in the Proper Format1");
+            exit(2);
+        } 
         thingToMemCpy = (((int32_t)atoi(operandOne)) << 16) | ((int32_t)atoi(operandTwo));
         memcpy(&memory[addr], &thingToMemCpy, 4);
 
     } else {
         /*printf("%d%02d\n", opcode,operand);*/
+        if((int)strlen(operData) > 2){
+            printf("Undefined Use - Command is not in the Proper Format%s%d", operData,(int)strlen(operData));
+            exit(2);
+        } 
         operand = (int32_t)atoi(operData);
         thingToMemCpy = (opcode << 16) | operand;
         memcpy(&memory[addr], &thingToMemCpy, 4);
@@ -166,90 +167,6 @@ void compile(char *input){
    
 }
 
-
-void execute(){
-    int k = 1;
-    int i; 
-
-    while(k == 1){
-        ir = memory[ic];
-        opcode = (ir >> 16) & 0xFFFF;
-        operand = ir & 0xFFFF; 
-        switch (opcode){
-            case 10: /*READ*/
-                ic++;
-                break;
-            case 11: /*WRIT*/
-                printWord(memory[operand]);
-                ic++;
-                break;
-            case 12: /*PRNT*/
-            /*BUGGGG SPLITTTTTTTTTTTTTTTTTTTTTTT*/
-                for(i=operand; memory[i] == '\0'; i++){ 
-                    printf("%c",memory[i]);
-                } 
-                ic++;            
-                break;
-            case 20: /*LOAD*/
-                acc = memory[operand];
-                ic++;
-                break;
-            case 21: /*STOR*/
-                memory[operand] = acc;
-                ic++;
-                break;
-            case 30: /*ADD*/
-                acc = acc + memory[operand];
-                ic++;
-                break;
-            case 31: /*SUB*/
-                acc = acc - memory[operand];
-                ic++;
-                break;
-            case 32: /*DIV*/
-                acc = acc / memory[operand];
-                ic++;
-                break;
-            case 33: /*MULT*/
-                acc = acc * memory[operand];
-                ic++;
-                break;
-            case 34: /*MOD*/
-                acc = acc % memory[operand];
-                ic++;
-                break;
-            case 40: /*BRAN*/
-                ic = operand;
-                break;
-            case 41: /*BRNG*/
-                if(acc < 0){
-                    ic = operand;
-                } else {
-                    ic++;
-                }
-                break;      
-            case 42: /*BRZR*/
-                if(acc == 0){
-                    ic = operand;
-                } else {
-                    ic++;
-                }
-                break;
-            case 99: /*HALT*/
-                printAll();
-                goto endOfForever;
-                ic++;
-                break;
-            default:
-            printf("Unknown command - Unrecognized command code");
-            exit(1);
-
-        }
-    }       
-    endOfForever:
-    return;
-}
-
 void printAll(){
     int i;
 
@@ -257,12 +174,14 @@ void printAll(){
     printf("REGISTERS: \n");
     printf("Accumulator:            %+05d\n", acc);
     printf("Instruction Counter:    %+02d\n", ic);
-    printf("Instruction Register:   %02d\n", ir);
+    printf("Instruction Register:   ");
+    printWord(ir);
+    printf("\n");
     printf("OperationCode:          %02d\n", opcode);
     printf("Operand:                %02d\n", operand);
     printf("\n");
     printf("MEMORY:\n");
-    printf("      0      1      2      3      4      5      6      7      8      9\n");
+    printf("     0      1      2      3      4      5      6      7      8      9\n");
     printf("0   ");
         for(i=0;i<10;i++){
             printf("+");
@@ -325,13 +244,120 @@ void printAll(){
         }
 
 }
+void execute(){
+    int k = 1;
+    int i;
+    int32_t op1;
+    int32_t op2;
+
+    while(k == 1){
+        ir = memory[ic];
+        opcode = (ir >> 16) & 0xFFFF;
+        operand = ir & 0xFFFF; 
+        switch (opcode){
+            case 10: /*READ*/
+                ic++;
+                break;
+            case 11: /*WRIT*/
+                printWord(memory[operand]);
+                ic++;
+                break;
+            case 12: /*PRNT*/
+                for(i=operand; ; i++){ 
+                    op1 = (memory[i] >> 16) & 0xFFFF;
+                    op2 = memory[i] & 0xFFFF;
+                    if(op1 == '\0'){
+                        break;
+                    } else {
+                        printf("%c",op1);
+                    }
+                    if(op2 == '\0'){
+                        break;
+                    } else {
+                    printf("%c",op2);
+                    }
+                } 
+                ic++;            
+                break;
+            case 20: /*LOAD*/
+                acc = memory[operand];
+                ic++;
+                break;
+            case 21: /*STOR*/
+                memory[operand] = acc;
+                ic++;
+                break;
+            case 30: /*ADD*/
+                acc = acc + memory[operand];
+                ic++;
+                break;
+            case 31: /*SUB*/
+                acc = acc - memory[operand];
+                ic++;
+                break;
+            case 32: /*DIV*/
+                if(memory[operand] == 0){
+                    printf("Divide 0 - Division by 0 was attempted");
+                    break;
+                }
+                acc = acc / memory[operand];
+                ic++;
+                break;
+            case 33: /*MULT*/
+                acc = acc * memory[operand];
+                ic++;
+                break;
+            case 34: /*MOD*/
+                if(memory[operand] == 0){
+                    printf("Divide 0 - Division by 0 was attempted");
+                    break;
+                }
+                acc = acc % memory[operand];
+                ic++;
+                break;
+            case 40: /*BRAN*/
+                ic = operand;
+                break;
+            case 41: /*BRNG*/
+                if(acc < 0){
+                    ic = operand;
+                } else {
+                    ic++;
+                }
+                break;      
+            case 42: /*BRZR*/
+                if(acc == 0){
+                    ic = operand;
+                } else {
+                    ic++;
+                }
+                break;
+            case 99: /*HALT*/
+                printAll();
+                goto endOfForever;
+                ic++;
+                break;
+            default:
+            printf("Unknown command - Unrecognized command code");
+            exit(1);
+
+        }
+    }       
+    endOfForever:
+    return;
+}
+
+
 int main(void) {
     while(fgets(input, 13, stdin)) {
 		/* printf("%s\n", input); */
         compile(input);
     }
+    if(isHalt == 0){
+        printf("No HALT - No Halt Command is Ever Given");
+        exit(3);
+    }
     /* stdin = fopen("/dev/tty", "r"); */
-   printAll();
     execute();
     return 0;
 }
@@ -339,3 +365,9 @@ int main(void) {
 
 
 /* %04d  for setting SET*/
+/* TODO
+
+1. Make Read Work
+2.RT Error: WORD OVERFLOW
+            Segmentation Fault
+            UnknownCharacter */
