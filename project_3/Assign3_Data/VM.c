@@ -245,7 +245,10 @@ void execute(VM *vm){
         }
         switch (vm->opcode){
             case 10: /*READ*/
+<<<<<<< HEAD
                 scanBuff = 0;
+=======
+>>>>>>> db78455b0bfd989e7d569ae4f2cc8dd6683b1669
                 scanf("%d", &scanBuff);
                 if(scanBuff >= 10000){
                     printf("Word Overflow - Attempts to place a Word in Memory larger than 4 digits");
@@ -253,18 +256,30 @@ void execute(VM *vm){
                 } else {
                     vm->memory[vm->operand] = scanBuff;
                 }
+<<<<<<< HEAD
                 vm->ic++;
+=======
+                ic++;
+>>>>>>> db78455b0bfd989e7d569ae4f2cc8dd6683b1669
                 break;
             case 11: /*WRIT*/
                 printWordTwo(vm->memory[vm->operand]);
                 vm->ic++;
                 break;
             case 12: /*PRNT*/
+<<<<<<< HEAD
                 for(i=vm->operand; ; i++){ 
                     op1 = vm->memory[i] / 100;
                     op2 = vm->memory[i] % 100;
                     if(op1 == 10 || op1 == '\0' || (op1 >= 65 && op1 <= 90)){
                         
+=======
+                for(i=operand; ; i++){ 
+                    op1 = (memory[i] >> 16) & 0xFFFF;
+                    op2 = memory[i] & 0xFFFF;
+                    if(op1 == 10 || op1 == '\0' || (op1 >= 65 && op1 <= 90)){
+                        return;
+>>>>>>> db78455b0bfd989e7d569ae4f2cc8dd6683b1669
                     } else {
                         printf("Unknown Character - When printing a String, an Unknown Character was reached");
                         exit(1);
@@ -275,7 +290,11 @@ void execute(VM *vm){
                         printf("%c",op1);
                     }
                     if(op2 == 10 || op2 == '\0' || (op2 >= 65 && op2 <= 90)){
+<<<<<<< HEAD
                     
+=======
+                        return;
+>>>>>>> db78455b0bfd989e7d569ae4f2cc8dd6683b1669
                     } else {
                         printf("Unknown Character - When printing a String, an Unknown Character was reached");
                         exit(1);
