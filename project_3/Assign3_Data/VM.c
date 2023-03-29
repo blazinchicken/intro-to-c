@@ -279,7 +279,10 @@ void execute(){
                     op1 = (memory[i] >> 16) & 0xFFFF;
                     op2 = memory[i] & 0xFFFF;
                     if(op1 == 10 || op1 == '\0' || (op1 >= 65 && op1 <= 90)){
-                        
+
+                    } else {
+                        printf("Unknown Character - When printing a String, an Unknown Character was reached");
+                        exit(1);
                     }
                     if(op1 == '\0'){
                         break;
