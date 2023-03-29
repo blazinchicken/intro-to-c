@@ -261,7 +261,7 @@ void execute(){
         }
         switch (opcode){
             case 10: /*READ*/
-                /*scanf("%d", &scanBuff);
+                scanf("%d", &scanBuff);
                 if(scanBuff >= 10000){
                     printf("Word Overflow - Attempts to place a Word in Memory larger than 4 digits");
                     break;
@@ -269,7 +269,7 @@ void execute(){
                     memory[operand] = scanBuff;
                 }
                 ic++;
-                break;*/
+                break;
             case 11: /*WRIT*/
                 printWord(memory[operand]);
                 ic++;
@@ -279,7 +279,7 @@ void execute(){
                     op1 = (memory[i] >> 16) & 0xFFFF;
                     op2 = memory[i] & 0xFFFF;
                     if(op1 == 10 || op1 == '\0' || (op1 >= 65 && op1 <= 90)){
-
+                        return;
                     } else {
                         printf("Unknown Character - When printing a String, an Unknown Character was reached");
                         exit(1);
@@ -288,6 +288,12 @@ void execute(){
                         break;
                     } else {
                         printf("%c",op1);
+                    }
+                    if(op2 == 10 || op2 == '\0' || (op2 >= 65 && op2 <= 90)){
+                        return;
+                    } else {
+                        printf("Unknown Character - When printing a String, an Unknown Character was reached");
+                        exit(1);
                     }
                     if(op2 == '\0'){
                         break;
