@@ -278,6 +278,9 @@ void execute(){
                 for(i=operand; ; i++){ 
                     op1 = (memory[i] >> 16) & 0xFFFF;
                     op2 = memory[i] & 0xFFFF;
+                    if(op1 == 10 || op1 == '\0' || (op1 >= 65 && op1 <= 90)){
+                        
+                    }
                     if(op1 == '\0'){
                         break;
                     } else {
