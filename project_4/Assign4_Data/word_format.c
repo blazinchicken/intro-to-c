@@ -24,8 +24,26 @@ To-Do List
 
 
 } */
-void dict_factory(){
+void dict_factory(char *buf2, FILE *wordsFile){
+/*char **wordlist = malloc(sizeof(char*));  pointer to pointer to words 
+    int  i, numwords = 0;
+    char *testwords[] = { "hello", "there", "folks", "in", "1840" };
+    wordlist[0] = strdup( testwords[0]);
 
+     This will show how you can add words to the array of pointers 
+    for( i = 1; i < sizeof( testwords ) / sizeof( testwords[ 0 ] ); i++ )
+    {
+         Expand our array of pointers by one pointer's worth 
+        wordlist = realloc( wordlist, (numwords + 1) * sizeof( char * ) );
+         Make a duplicate of the word and save the pointer to it 
+        wordlist[ numwords ] = strdup( testwords[ i ] );
+        numwords++;
+    }
+
+    printf( "Added %d words to the array and they are:\n", numwords );
+    for( i = 0; i < numwords; i++ )
+        printf( "%s\n", wordlist[ i ] );
+*/
 }
 
 
@@ -62,7 +80,8 @@ int main(int argc, char **argv){
    char buf[100];
    int lineLength = atoi(argv[1]);
    char lineName[100] = "";
-   char lineName2[100] = ""; 
+   char lineName2[100] = "";
+   char *buf2; 
    FILE *file;
    FILE *outFile;
    FILE *wordsFile;
@@ -89,10 +108,25 @@ int main(int argc, char **argv){
          {
           continue; 
          }
+         strcpy(buf2,buf);
          word_factory(buf, lineLength, outFile);
-         dict_factory();
+         dict_factory(buf2, wordsFile);
       }
       word_factory(NULL,lineLength, outFile);
    }
    return 0;
 }
+
+
+
+/*for i < strlen(array) 
+if string compare == 0 {
+   counter = 1
+   fprintf(the string, the counter, newline)
+
+} else {
+   counter++
+   i++
+}    {1,1,2,3,4,5,5,5,5,6,6,6,6,7,7,8}
+     {1,"",2,3,4,"","","",5,"","","",6,"",7,8}
+     if i != NULL, print i and counter*/
