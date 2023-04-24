@@ -24,26 +24,66 @@ To-Do List
 
 
 } */
-void dict_factory(char *buf2, FILE *wordsFile){
-/*char **wordlist = malloc(sizeof(char*));  pointer to pointer to words 
-    int  i, numwords = 0;
-    char *testwords[] = { "hello", "there", "folks", "in", "1840" };
-    wordlist[0] = strdup( testwords[0]);
+char **wordlist;
+int numwords = 0;
 
-     This will show how you can add words to the array of pointers 
-    for( i = 1; i < sizeof( testwords ) / sizeof( testwords[ 0 ] ); i++ )
-    {
-         Expand our array of pointers by one pointer's worth 
-        wordlist = realloc( wordlist, (numwords + 1) * sizeof( char * ) );
-         Make a duplicate of the word and save the pointer to it 
-        wordlist[ numwords ] = strdup( testwords[ i ] );
-        numwords++;
-    }
+void dict_factory(char *buf2){
+   if(numwords == 0){
+      wordlist[numwords] = strdup(buf2);
+   }
+   wordlist = realloc(wordlist, (numwords + 1) * sizeof(char *));
+    /*fprintf(wordsFile, "%s\n", wordlist[numwords]);*/
+   if(numwords > 0){
+      wordlist[numwords] = strdup(buf2);
+   }
+   numwords++;
+}
+static int cmp_str(const void *one, const void *two){
+   unsigned char oneAdd, twoAdd;
+   const unsigned char *onePT;
+   const unsigned char *twoPT;
+   int oneCapital, twoCapital;
+   int comp;
 
-    printf( "Added %d words to the array and they are:\n", numwords );
-    for( i = 0; i < numwords; i++ )
-        printf( "%s\n", wordlist[ i ] );
-*/
+
+   onePT = *((const unsigned char **) one);
+   twoPT = *((const unsigned char **) two);
+   
+   comp = strcasecmp((const char *)onePT,(const char *)twoPT);
+   if(comp != 0){
+      return comp;
+   }
+
+   do {
+      oneCapital = 1;
+      twoCapital = 1;
+
+      oneAdd = (unsigned char) *onePT++; /* lower case  = 97-122, upper case = 65 - 90*/
+      twoAdd = (unsigned char) *twoPT++;
+
+      if (oneAdd == '\0'){
+         return oneAdd - twoAdd;
+      }
+      if(oneAdd >= 97 && oneAdd <= 122){
+         oneAdd = oneAdd - 32;
+         oneCapital = 0;
+      }
+      if(twoAdd >= 97 && twoAdd <= 122){
+         twoAdd = twoAdd - 32;
+         twoCapital = 0;
+      }                                   
+      if((oneAdd == twoAdd) && (oneCapital != twoCapital)){
+         return twoCapital - oneCapital;
+      }
+
+
+   } while (oneAdd == twoAdd); 
+   return oneAdd - twoAdd;
+}    
+
+
+void sort_factory(char **wordlist, int numwords) {
+   qsort(wordlist, numwords, sizeof(wordlist[0]), cmp_str);
 }
 
 
@@ -81,10 +121,13 @@ int main(int argc, char **argv){
    int lineLength = atoi(argv[1]);
    char lineName[100] = "";
    char lineName2[100] = "";
-   char *buf2; 
+   char buf2[100];
+   int i;
    FILE *file;
    FILE *outFile;
    FILE *wordsFile;
+
+   wordlist = malloc(sizeof(char*));
 
    sprintf(lineName, "%s.out", argv[2]);
    sprintf(lineName2, "%s.words", argv[2]);
@@ -99,6 +142,7 @@ int main(int argc, char **argv){
 
    if(file == NULL){
       printf("Could Not Open File, check spelling\n");
+      exit(1);
    } else {
       outFile = fopen(lineName, "w+");
       wordsFile = fopen(lineName2, "w+");
@@ -110,20 +154,27 @@ int main(int argc, char **argv){
          }
          strcpy(buf2,buf);
          word_factory(buf, lineLength, outFile);
-         dict_factory(buf2, wordsFile);
+         dict_factory(buf2);
+         
       }
-      word_factory(NULL,lineLength, outFile);
+      sort_factory(wordlist, numwords);
+      for(i=0;i<numwords;i++){
+         fprintf(wordsFile,"%s\n",wordlist[i]);
+      }
+      word_factory(NULL, lineLength, outFile);
    }
+   
    return 0;
 }
 
 
 
 /*for i < strlen(array) 
-if string compare == 0 {
-   counter = 1
+if string compare != 0 {
+   
    fprintf(the string, the counter, newline)
-
+   counter = 1
+   
 } else {
    counter++
    i++
