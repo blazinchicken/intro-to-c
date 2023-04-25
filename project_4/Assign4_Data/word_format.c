@@ -27,6 +27,24 @@ To-Do List
 char **wordlist;
 int numwords = 0;
 
+void printAll(FILE *wordsFile){
+   int i;
+   int counter = 1;
+
+   for(i=0;i<numwords;i++){
+      if(i<= (numwords-2)){
+         if((strcmp(wordlist[i],wordlist[i+1])) != 0){
+            fprintf(wordsFile, "%s: %d\n", wordlist[i], counter);
+            counter = 1;
+         } else {
+            counter++;
+         }
+      } else {
+         fprintf(wordsFile, "%s: %d\n", wordlist[i], counter);
+      }
+   }
+}
+
 void dict_factory(char *buf2){
    if(numwords == 0){
       wordlist[numwords] = strdup(buf2);
@@ -38,6 +56,7 @@ void dict_factory(char *buf2){
    }
    numwords++;
 }
+
 static int cmp_str(const void *one, const void *two){
    unsigned char oneAdd, twoAdd;
    const unsigned char *onePT;
@@ -81,11 +100,9 @@ static int cmp_str(const void *one, const void *two){
    return oneAdd - twoAdd;
 }    
 
-
 void sort_factory(char **wordlist, int numwords) {
    qsort(wordlist, numwords, sizeof(wordlist[0]), cmp_str);
 }
-
 
 void word_factory(char *buf, int lineLength, FILE *outFile){ /*creates words*/
    static int wordLength;
@@ -122,7 +139,7 @@ int main(int argc, char **argv){
    char lineName[100] = "";
    char lineName2[100] = "";
    char buf2[100];
-   int i;
+   /*int i;*/
    FILE *file;
    FILE *outFile;
    FILE *wordsFile;
@@ -158,12 +175,16 @@ int main(int argc, char **argv){
          
       }
       sort_factory(wordlist, numwords);
-      for(i=0;i<numwords;i++){
+      /*for(i=0;i<numwords;i++){
          fprintf(wordsFile,"%s\n",wordlist[i]);
-      }
+      }*/
+
+      printAll(wordsFile);
       word_factory(NULL, lineLength, outFile);
    }
-   
+   fclose(wordsFile);
+   fclose(outFile);
+   fclose(file);
    return 0;
 }
 
